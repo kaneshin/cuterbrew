@@ -1,0 +1,25 @@
+CUTEr and SifDec installer.
+===========================
+
+What are CUTEr and SifDec?
+--------------------------
+- [CUTEr](http://www.cuter.rl.ac.uk/ "CUTEr")
+- [SifDec](http://www.cuter.rl.ac.uk/sifdec/ "SifDec")
+
+
+Prerequisite
+------------
+- bash
+- csh
+- GNU gcc
+- GNU gfortran
+
+Usage
+-----
+    ./install_CUTEr_SifDec.sh
+
+LICENSE
+-------
+The MIT License.
+This software is copyright (c) 2011 by Shintaro Kaneko.
+
