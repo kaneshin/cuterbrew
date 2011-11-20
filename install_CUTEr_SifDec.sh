@@ -44,7 +44,6 @@ else
     exit $ret
 fi
 
-
 # set variables
 OPTIMHOME=~/optim
 ## for cuter
@@ -56,15 +55,6 @@ MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
 ## for mastsif
 MASTSIF=$OPTIMHOME/mastsif
 
-# set paths
-# set the PATH for cuter & sifdec
-PATH=$PATH:$MYCUTER/bin:$MYCUTER/double/bin
-PATH=$PATH:$MYSIFDEC/bin:$MYSIFDEC/double/bin
-# set the MANPATH for cuter & sifdec
-MANPATH=$MANPATH:$CUTER/common/man:$SIFDEC/common/man
-# set the LIBPATH for cuter
-LIBPATH=$LIBPATH:$MYCUTER/double/lib
-
 # CUTEr directory
 optim=`dir $OPTIMHOME 2>&1`
 ret=$?
@@ -72,7 +62,7 @@ if [ $ret -eq 0 ]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
         echo "$OPTIMHOME exists on your PC." >&2
-        echo -n "Do you want to continue?(y/N)"
+        echo -n "Do you want to continue?(y/N) "
         read yesno
         if [[ "$yesno" == "" ]]; then
             yesno="N"
@@ -91,7 +81,7 @@ if [ $ret -eq 0 ]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
         echo "$OPTIMHOME/src exists on your PC." >&2
-        echo -n "Do you want to continue?(y/N)"
+        echo -n "Do you want to continue?(y/N) "
         read yesno
         if [[ "$yesno" == "" ]]; then
             yesno="N"
@@ -108,6 +98,22 @@ fi
 cd $OPTIMHOME/src
 wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
 wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
+
+# install sifdec
+cd $OPTIMHOME
+tar zxvf src/sifdec.tar.gz
+cd $SIFDEC
+TEMP=~/__temp_$RANDOM
+touch $TEMP
+echo '5' >> $TEMP       # Select platform => (5) PC
+echo '11' >> $TEMP      # Select Fortran compiler => [11] GNU gfortran
+echo 'D' >> $TEMP       # Set install precision => D=double
+echo 'L' >> $TEMP       # Set install size => L=large
+echo 'Y' >> $TEMP       # SifDec will be installed in $SIFDEC => Y=Yes
+echo 'Y' >> $TEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
+echo 'Y' >> $TEMP       # make all in $MYSIFDEC => Y=Yes
+./install_sifdec < $TEMP
+rm -f $TEMP
 
 # install cuter
 cd $OPTIMHOME
@@ -126,34 +132,20 @@ echo 'Y' >> $TEMP       # make all in $MYCUTER => Y=Yes
 ./install_cuter < $TEMP
 rm -f $TEMP
 
-# install sifdec
-cd $OPTIMHOME
-tar zxvf src/sifdec.tar.gz
-cd $SIFDEC
-TEMP=~/__temp_$RANDOM
-touch $TEMP
-echo '5' >> $TEMP       # Select platform => (5) PC
-echo '11' >> $TEMP      # Select Fortran compiler => [11] GNU gfortran
-echo 'D' >> $TEMP       # Set install precision => D=double
-echo 'L' >> $TEMP       # Set install size => L=large
-echo 'Y' >> $TEMP       # SifDec will be installed in $SIFDEC => Y=Yes
-echo 'Y' >> $TEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
-echo 'Y' >> $TEMP       # make all in $MYSIFDEC => Y=Yes
-./install_sifdec < $TEMP
-rm -f $TEMP
-
 # TODO
 #   echo Using
 CUTERRC=$OPTIMHOME/.optimrc
 cat > $CUTERRC << _EOF_
-export $OPTIMHOME
-export $CUTER
-export $MYCUTER
-export $SIFDEC
-export $MYSIFDEC
-export $MASTSIF
-export $PATH
-export $PATH
-export $MANPATH
-export $LIBPATH
+export OPTIMHOME=~/optim
+export CUTER=\$OPTIMHOME/cuter
+export MYCUTER=\$CUTER/CUTEr.large.pc.lnx.gfo
+export SIFDEC=\$OPTIMHOME/sifdec
+export MYSIFDEC=\$SIFDEC/SifDec.large.pc.lnx.gfo
+export MASTSIF=\$OPTIMHOME/mastsif
+export PATH=\$PATH:\$MYCUTER/bin:\$MYCUTER/double/bin
+export PATH=\$PATH:\$MYSIFDEC/bin:\$MYSIFDEC/double/bin
+export MANPATH=\$MANPATH:\$CUTER/common/man:\$SIFDEC/common/man
+export LIBPATH=\$LIBPATH:\$MYCUTER/double/lib
 _EOF_
+
+# EOF
