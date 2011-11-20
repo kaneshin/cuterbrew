@@ -11,6 +11,17 @@
 #   This software license is The MIT License.
 #===========================================================================
 
+# set variables
+OPTIMHOME=~/optim
+## for cuter
+CUTER=$OPTIMHOME/cuter
+MYCUTER=$CUTER/CUTEr.large.pc.lnx.gfo
+## for sifdec
+SIFDEC=$OPTIMHOME/sifdec
+MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
+## for mastsif
+MASTSIF=$OPTIMHOME/mastsif
+
 # make sure that csh exists
 csh=`which csh 2>&1`
 ret=$?
@@ -44,16 +55,6 @@ else
     exit $ret
 fi
 
-# set variables
-OPTIMHOME=~/optim
-## for cuter
-CUTER=$OPTIMHOME/cuter
-MYCUTER=$CUTER/CUTEr.large.pc.lnx.gfo
-## for sifdec
-SIFDEC=$OPTIMHOME/sifdec
-MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
-## for mastsif
-MASTSIF=$OPTIMHOME/mastsif
 
 # CUTEr directory
 optim=`dir $OPTIMHOME 2>&1`
@@ -96,8 +97,20 @@ else
 fi
 # wget
 cd $OPTIMHOME/src
+# CUTEr
 wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
+# SifDec
 wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
+
+# install SIF files
+# SIF small
+cd $OPTIMHOME
+wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
+tar zxvf src/mastsif_small.tar.gz
+# SIF large
+# cd $OPTIMHOME
+# wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
+# tar zxvf src/mastsif_large.tar.gz
 
 # install sifdec
 cd $OPTIMHOME
