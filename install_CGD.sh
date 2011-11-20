@@ -9,14 +9,17 @@
 #   TODO
 #===========================================================================
 
+if [[ "$OPTIMHOME" == "" ]]; then
+    echo "You must do a \"source .cuterrc\"."
+    exit 1
+fi
+
 # set variables
-RUNDIR=`dirname ${0}`
-OPTIMHOME=~/optim
 CGDDIR=CG_DESCENT
 CGDHOME=$OPTIMHOME/$CGDDIR
 CUTEINTF=$CGDHOME/CUTEr_interface
 
-cd $RUNDIR
+cd `dirname ${0}`
 cp run_cg_descent.sh $OPTIMHOME
 
 # wget

@@ -63,14 +63,14 @@ if [ $ret -eq 0 ]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
         echo "$OPTIMHOME exists on your PC." >&2
-        echo -n "Do you want to continue?(y/N) "
+        echo -n "Do you want to finish [Y/n]? "
         read yesno
         if [[ "$yesno" == "" ]]; then
-            yesno="N"
+            yesno="Y"
         fi
         yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
     done
-    if [[ "$yesno" == "N" ]]; then
+    if [[ "$yesno" == "Y" ]]; then
         exit 1
     fi
 else
@@ -82,14 +82,14 @@ if [ $ret -eq 0 ]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
         echo "$OPTIMHOME/src exists on your PC." >&2
-        echo -n "Do you want to continue?(y/N) "
+        echo -n "Do you want to finish [Y/n]? "
         read yesno
         if [[ "$yesno" == "" ]]; then
-            yesno="N"
+            yesno="Y"
         fi
         yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
     done
-    if [[ "$yesno" == "N" ]]; then
+    if [[ "$yesno" == "Y" ]]; then
         exit 1
     fi
 else
@@ -102,15 +102,39 @@ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
 # SifDec
 wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
 
-# install SIF files
+# download SIF files
 # SIF small
-cd $OPTIMHOME
-wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
-tar zxvf src/mastsif_small.tar.gz
+yesno=""
+while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+    echo -n "Do you want to download a SIF(small) [Y/n]? "
+    read yesno
+    if [[ "$yesno" == "" ]]; then
+        yesno="Y"
+    fi
+    yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
+done
+if [[ "$yesno" == "Y" ]]; then
+    cd $OPTIMHOME/src
+    wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
+    cd $OPTIMHOME
+    tar zxvf src/mastsif_small.tar.gz
+fi
 # SIF large
-# cd $OPTIMHOME
-# wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
-# tar zxvf src/mastsif_large.tar.gz
+yesno=""
+while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+    echo -n "Do you want to download a SIF(large) [Y/n]? "
+    read yesno
+    if [[ "$yesno" == "" ]]; then
+        yesno="Y"
+    fi
+    yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
+done
+if [[ "$yesno" == "Y" ]]; then
+    cd $OPTIMHOME/src
+    wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
+    cd $OPTIMHOME
+    tar zxvf src/mastsif_large.tar.gz
+fi
 
 # install sifdec
 cd $OPTIMHOME
@@ -147,7 +171,7 @@ rm -f $TEMP
 
 # TODO
 #   echo Using
-CUTERRC=$OPTIMHOME/.optimrc
+CUTERRC=$OPTIMHOME/.cuterrc
 cat > $CUTERRC << _EOF_
 export OPTIMHOME=~/optim
 export CUTER=\$OPTIMHOME/cuter
