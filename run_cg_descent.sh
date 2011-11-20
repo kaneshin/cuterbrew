@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 1. Put cg_user.h into $CUTER/common/include
-CGD=~/optim/CGD_5.0
+CGD=~/optim/CD_DESCENT
 cd $CGD
 cp cg_user.h $CUTER/common/include
 # 2. Put cg_descentma.c into $CUTER/common/src/tools
