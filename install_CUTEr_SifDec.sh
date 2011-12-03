@@ -3,7 +3,7 @@
 #===========================================================================
 # File: install_CUTEr_SifDec.sh
 # Version: 0.1.0
-# Last Change: 11-Nov-2011.
+# Last Change: 03-Dec-2011.
 # Maintainer:  Shintaro Kaneko <kaneshin0120@gmail.com>
 # Description:
 #   This program is the auto running installation for CUTEr and SifDec.
@@ -173,7 +173,7 @@ rm -f $TEMP
 #   echo Using
 CUTERRC=$OPTIMHOME/.cuterrc
 cat > $CUTERRC << _EOF_
-export OPTIMHOME=~/optim
+export OPTIMHOME=$OPTIMHOME
 export CUTER=\$OPTIMHOME/cuter
 export MYCUTER=\$CUTER/CUTEr.large.pc.lnx.gfo
 export SIFDEC=\$OPTIMHOME/sifdec
