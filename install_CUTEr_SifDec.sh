@@ -2,7 +2,7 @@
 
 #===========================================================================
 # File: install_CUTEr_SifDec.sh
-# Version: 0.1.0
+# Version: 0.2.0
 # Last Change: 03-Dec-2011.
 # Maintainer:  Shintaro Kaneko <kaneshin0120@gmail.com>
 # Description:
@@ -12,58 +12,53 @@
 #===========================================================================
 
 # set variables
-OPTIMHOME=~/optim
+WORKHOME=~/work
 ## for cuter
-CUTER=$OPTIMHOME/cuter
+CUTER=$WORKHOME/cuter
 MYCUTER=$CUTER/CUTEr.large.pc.lnx.gfo
 ## for sifdec
-SIFDEC=$OPTIMHOME/sifdec
+SIFDEC=$WORKHOME/sifdec
 MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
 ## for mastsif
-MASTSIF=$OPTIMHOME/mastsif
+MASTSIF=$WORKHOME/mastsif
 
 # make sure that csh exists
 csh=`which csh 2>&1`
-ret=$?
-if [ $ret -eq 0 ] && [ -x "$csh" ]; then
-    (exit 0)
-else
+if [[ $? != 0 ]]; then
     echo "CUTEr and SifDec can't be installed without csh." >&2
     echo "Install csh first, and then try again." >&2
-    exit $ret
+    exit $?
 fi
 
 # make sure that gcc exists
 gcc=`which gcc 2>&1`
-ret=$?
-if [ $ret -eq 0 ] && [ -x "$gcc" ]; then
-    (exit 0)
-else
+if [[ $? != 0 ]]; then
     echo "CUTEr can't be installed without gcc." >&2
     echo "Install gcc first, and then try again." >&2
-    exit $ret
+    exit $?
 fi
 
 # make sure that gfortran exists
 gfortran=`which gfortran 2>&1`
-ret=$?
-if [ $ret -eq 0 ] && [ -x "$gfortran" ]; then
-    (exit 0)
-else
+if [[ $? != 0 ]]; then
     echo "CUTEr and SifDec can't be installed without gfortran." >&2
     echo "Install gfortran first, and then try again." >&2
-    exit $ret
+    exit $?
 fi
 
+# make work directory
+w=`dir $WORKHOME 2>&1`
+if [[ $? != 0 ]]; then
+    mkdir $WORKHOME
+fi
 
 # CUTEr directory
-optim=`dir $OPTIMHOME 2>&1`
-ret=$?
-if [ $ret -eq 0 ]; then
+c=`dir $CUTER 2>&1`
+if [[ $? == 0 ]]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
-        echo "$OPTIMHOME exists on your PC." >&2
-        echo -n "Do you want to finish [Y/n]? "
+        echo "$CUTER exists on your PC." >&2
+        echo -n "Do you want to remove $CUTER [Y/n]? "
         read yesno
         if [[ "$yesno" == "" ]]; then
             yesno="Y"
@@ -71,36 +66,29 @@ if [ $ret -eq 0 ]; then
         yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
     done
     if [[ "$yesno" == "Y" ]]; then
-        exit 1
+        rm -rf $CUTER
     fi
-else
-    mkdir $OPTIMHOME
 fi
-optimsrc=`dir $OPTIMHOME/src 2>&1`
-ret=$?
-if [ $ret -eq 0 ]; then
-    yesno=""
-    while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
-        echo "$OPTIMHOME/src exists on your PC." >&2
-        echo -n "Do you want to finish [Y/n]? "
-        read yesno
-        if [[ "$yesno" == "" ]]; then
-            yesno="Y"
-        fi
-        yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
-    done
-    if [[ "$yesno" == "Y" ]]; then
-        exit 1
-    fi
-else
-    mkdir $OPTIMHOME/src
+mkdir $CUTER
+
+# make src directory
+s=`dir $WORKHOME/src 2>&1`
+if [[ $? != 0 ]]; then
+    mkdir $WORKHOME/src
 fi
+
 # wget
-cd $OPTIMHOME/src
+cd $WORKHOME/src
 # CUTEr
-wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
+list=`ls | grep cuter.tar.gz 2>&1`
+if [[ $? != 0 ]]; then
+    wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
+fi
 # SifDec
-wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
+list=`ls | grep sifdec.tar.gz 2>&1`
+if [[ $? != 0 ]]; then
+    wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
+fi
 
 # download SIF files
 # SIF small
@@ -114,9 +102,9 @@ while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
     yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
 done
 if [[ "$yesno" == "Y" ]]; then
-    cd $OPTIMHOME/src
+    cd $WORKHOME/src
     wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
-    cd $OPTIMHOME
+    cd $WORKHOME
     tar zxvf src/mastsif_small.tar.gz
 fi
 # SIF large
@@ -130,17 +118,17 @@ while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
     yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
 done
 if [[ "$yesno" == "Y" ]]; then
-    cd $OPTIMHOME/src
+    cd $WORKHOME/src
     wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
-    cd $OPTIMHOME
+    cd $WORKHOME
     tar zxvf src/mastsif_large.tar.gz
 fi
 
 # install sifdec
-cd $OPTIMHOME
+cd $WORKHOME
 tar zxvf src/sifdec.tar.gz
 cd $SIFDEC
-TEMP=~/__temp_$RANDOM
+TEMP=~/temp_$RANDOM
 touch $TEMP
 echo '5' >> $TEMP       # Select platform => (5) PC
 echo '11' >> $TEMP      # Select Fortran compiler => [11] GNU gfortran
@@ -150,10 +138,10 @@ echo 'Y' >> $TEMP       # SifDec will be installed in $SIFDEC => Y=Yes
 echo 'Y' >> $TEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
 echo 'Y' >> $TEMP       # make all in $MYSIFDEC => Y=Yes
 ./install_sifdec < $TEMP
-rm -f $TEMP
+# rm -f $TEMP
 
 # install cuter
-cd $OPTIMHOME
+cd $WORKHOME
 tar zxvf src/cuter.tar.gz
 cd $CUTER
 TEMP=~/__temp_$RANDOM
@@ -167,18 +155,18 @@ echo 'Y' >> $TEMP       # CUTEr will be installed in $CUTER => Y=Yes
 echo 'Y' >> $TEMP       # install_mycuter will be run in $MYCUTER => Y=Yes
 echo 'Y' >> $TEMP       # make all in $MYCUTER => Y=Yes
 ./install_cuter < $TEMP
-rm -f $TEMP
+# rm -f $TEMP
 
 # TODO
 #   echo Using
-CUTERRC=$OPTIMHOME/.cuterrc
+CUTERRC=$WORKHOME/.cuterrc
 cat > $CUTERRC << _EOF_
-export OPTIMHOME=$OPTIMHOME
-export CUTER=\$OPTIMHOME/cuter
+export WORKHOME=$WORKHOME
+export CUTER=\$WORKHOME/cuter
 export MYCUTER=\$CUTER/CUTEr.large.pc.lnx.gfo
-export SIFDEC=\$OPTIMHOME/sifdec
+export SIFDEC=\$WORKHOME/sifdec
 export MYSIFDEC=\$SIFDEC/SifDec.large.pc.lnx.gfo
-export MASTSIF=\$OPTIMHOME/mastsif
+export MASTSIF=\$WORKHOME/mastsif
 export PATH=\$PATH:\$MYCUTER/bin:\$MYCUTER/double/bin
 export PATH=\$PATH:\$MYSIFDEC/bin:\$MYSIFDEC/double/bin
 export MANPATH=\$MANPATH:\$CUTER/common/man:\$SIFDEC/common/man
