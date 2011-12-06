@@ -2,13 +2,13 @@
 
 #===========================================================================
 # File: install_CUTEr_SifDec.sh
-# Version: 0.2.0
+# Version: 0.3.0
 # Last Change: 03-Dec-2011.
-# Maintainer:  Shintaro Kaneko <kaneshin0120@gmail.com>
+# Maintainer: Shintaro Kaneko <kaneshin0120@gmail.com>
+# License: The MIT License
 # Description:
 #   This program is the auto running installation for CUTEr and SifDec.
 #   You must install bash, csh, gcc and gfortran on your PC beforehand.
-#   This software license is The MIT License.
 #===========================================================================
 
 # set variables
@@ -52,11 +52,13 @@ if [[ $? != 0 ]]; then
     mkdir $WORKHOME
 fi
 
-# CUTEr directory
+# cuter directory
 c=`dir $CUTER 2>&1`
 if [[ $? == 0 ]]; then
     yesno=""
     while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+        echo ""
+        echo " -------------------------------------------------------"
         echo "$CUTER exists on your PC." >&2
         echo -n "Do you want to remove $CUTER [Y/n]? "
         read yesno
@@ -68,8 +70,31 @@ if [[ $? == 0 ]]; then
     if [[ "$yesno" == "Y" ]]; then
         rm -rf $CUTER
     fi
+else
+    mkdir $CUTER
 fi
-mkdir $CUTER
+
+# sifdec directory
+c=`dir $SIFDEC 2>&1`
+if [[ $? == 0 ]]; then
+    yesno=""
+    while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+        echo ""
+        echo " -------------------------------------------------------"
+        echo "$SIFDEC exists on your PC." >&2
+        echo -n "Do you want to remove $SIFDEC [Y/n]? "
+        read yesno
+        if [[ "$yesno" == "" ]]; then
+            yesno="Y"
+        fi
+        yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
+    done
+    if [[ "$yesno" == "Y" ]]; then
+        rm -rf $SIFDEC
+    fi
+else
+    mkdir $SIFDEC
+fi
 
 # make src directory
 s=`dir $WORKHOME/src 2>&1`
@@ -94,6 +119,8 @@ fi
 # SIF small
 yesno=""
 while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+    echo ""
+    echo " -------------------------------------------------------"
     echo -n "Do you want to download a SIF(small) [Y/n]? "
     read yesno
     if [[ "$yesno" == "" ]]; then
@@ -110,6 +137,8 @@ fi
 # SIF large
 yesno=""
 while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
+    echo ""
+    echo " -------------------------------------------------------"
     echo -n "Do you want to download a SIF(large) [Y/n]? "
     read yesno
     if [[ "$yesno" == "" ]]; then
@@ -138,7 +167,7 @@ echo 'Y' >> $TEMP       # SifDec will be installed in $SIFDEC => Y=Yes
 echo 'Y' >> $TEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
 echo 'Y' >> $TEMP       # make all in $MYSIFDEC => Y=Yes
 ./install_sifdec < $TEMP
-# rm -f $TEMP
+rm -f $TEMP
 
 # install cuter
 cd $WORKHOME
@@ -155,11 +184,11 @@ echo 'Y' >> $TEMP       # CUTEr will be installed in $CUTER => Y=Yes
 echo 'Y' >> $TEMP       # install_mycuter will be run in $MYCUTER => Y=Yes
 echo 'Y' >> $TEMP       # make all in $MYCUTER => Y=Yes
 ./install_cuter < $TEMP
-# rm -f $TEMP
+rm -f $TEMP
 
-# TODO
-#   echo Using
 CUTERRC=$WORKHOME/.cuterrc
+rm -f $CUTERRC
+touch $CUTERRC
 cat > $CUTERRC << _EOF_
 export WORKHOME=$WORKHOME
 export CUTER=\$WORKHOME/cuter
@@ -172,5 +201,12 @@ export PATH=\$PATH:\$MYSIFDEC/bin:\$MYSIFDEC/double/bin
 export MANPATH=\$MANPATH:\$CUTER/common/man:\$SIFDEC/common/man
 export LIBPATH=\$LIBPATH:\$MYCUTER/double/lib
 _EOF_
+
+# Usin .cuterrc
+echo "Create \"$CUTERRC\" which must run CUTEr and SidDec."
+echo "You write down \"source $CUTERRC\" on your .zshrc or .bashrc."
+echo " -------------------------------------------------------"
+echo " --- @INC $CUTERRC ---"
+cat $CUTERRC
 
 # EOF
