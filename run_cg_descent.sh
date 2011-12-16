@@ -36,5 +36,5 @@ chmod a+x cg_descent
 chmod a+x sdcg_descent
 
 # ext. delete object files
-# rm $CUTER/common/src/tools/cg_descentma.o
-# rm $CGD/cg_descent.o
+make clean
+
