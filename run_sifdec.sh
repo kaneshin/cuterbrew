@@ -1,10 +1,10 @@
 #!/bin/bash
 
-LOG=kai_result.log
+LOG=result.log
 rm -f $LOG
 touch $LOG
 
-SDFILE=("3PK" "BRYBND" "BARD" "ALLINIT" "ALLINITU" "DIXON3DQ" "PT" "WEEDS" "YAO" "ZIGZAG" "VARDIM" "PORTSQP")
+SDFILE=("3PK" "BRYBND" "VARDIM" "PORTSQP")
 for (( i = 0; i < ${#SDFILE[@]}; i++ ))
 do
     echo ${SDFILE[$i]}
@@ -16,3 +16,4 @@ done
 echo ""
 echo "ALL FINISH"
 echo "log file is \"$LOG\"."
+

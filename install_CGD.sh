@@ -2,40 +2,41 @@
 
 #===========================================================================
 # File: install_CGD.sh
-# Version: 0.0.1
-# Last Change: 11-Nov-2011.
+# Version: 0.9.0
+# Last Change: 15-Mar-2012.
 # Maintainer:  Shintaro Kaneko <kaneshin0120@gmail.com>
 # Description:
+#   This program is the auto running installation for CG_DESCENT.
 #===========================================================================
 
-if [[ "$WORKHOME" == "" ]]; then
+if [[ "$CUTERHOME" == "" ]]; then
     echo "You must do a \"source .cuterrc\"."
     exit 1
 fi
 
-# set variables
+# Set the variables
 CGDDIR=CG_DESCENT
-CGDHOME=$WORKHOME/$CGDDIR
+CGDHOME=$CUTERHOME/$CGDDIR
 CUTEINTF=$CGDHOME/CUTEr_interface
 
 cd `dirname ${0}`
-cp run_cg_descent.sh $WORKHOME
+cp run_cg_descent.sh $CUTERHOME
 
-# make src directory
-s=`dir $WORKHOME/src 2>&1`
+# Make src directory
+dir=`dir $CUTERHOME/src 2>&1`
 if [[ $? != 0 ]]; then
-    mkdir $WORKHOME/src
+    mkdir $CUTERHOME/src
 fi
 
-# wget
-cd $WORKHOME/src
+# Get CG_DESCENT archive
+cd $CUTERHOME/src
 list=`ls | grep CG_DESCENT-C-5.0.tar.gz 2>&1`
 if [[ $? != 0 ]]; then
     wget http://www.math.ufl.edu/~hager/papers/CG/Archive/CG_DESCENT-C-5.0.tar.gz
 fi
 
-# install CG_DESCENT
-cd $WORKHOME
+# Install CG_DESCENT
+cd $CUTERHOME
 tar zxvf src/CG_DESCENT-C-5.0.tar.gz > $CGDDIR.log
 c=`dir $CGDDIR 2>&1`
 if [[ $? == 0 ]]; then
@@ -47,7 +48,6 @@ mv CG_DESCENT.log $CGDDIR/
 cd $CUTEINTF
 cp * $CGDHOME
 
-cd $WORKHOME
+cd $CUTERHOME
 mv run_cg_descent.sh $CGDHOME
 
-# EOF
