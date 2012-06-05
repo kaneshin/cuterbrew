@@ -1,14 +1,9 @@
 #!/bin/bash
 
-#===========================================================================
-# File: install_CUTEr_SifDec.sh
-# Version: 1.0.0
-# Last Change: 15-Mar-2012.
-# Maintainer: Shintaro Kaneko <kaneshin0120@gmail.com>
-# Description:
-#   This program is the auto running installation for CUTEr and SifDec.
-#   You must install bash, csh, gcc and gfortran on your PC beforehand.
-#===========================================================================
+# File:         install_CUTEr_SifDec.sh
+# Maintainer:   Shintaro Kaneko <kaneshin0120@gmail.com>
+# Last Change:  05-Jun-2012.
+# Version:      1.0.0
 
 # Set the variables
 CUTERHOME=~/CUTEr

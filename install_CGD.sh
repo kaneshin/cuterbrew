@@ -1,13 +1,9 @@
 #!/bin/bash
 
-#===========================================================================
-# File: install_CGD.sh
-# Version: 0.9.0
-# Last Change: 15-Mar-2012.
-# Maintainer:  Shintaro Kaneko <kaneshin0120@gmail.com>
-# Description:
-#   This program is the auto running installation for CG_DESCENT.
-#===========================================================================
+# File:         install_CGD.sh
+# Maintainer:   Shintaro Kaneko <kaneshin0120@gmail.com>
+# Last Change:  05-Jun-2012.
+# Version:      0.9.0
 
 if [[ "$CUTERHOME" == "" ]]; then
     echo "You must do a \"source .cuterrc\"."
