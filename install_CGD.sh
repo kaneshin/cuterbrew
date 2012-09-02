@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # File:         install_CGD.sh
+# Version:      1.0.0
 # Maintainer:   Shintaro Kaneko <kaneshin0120@gmail.com>
-# Last Change:  05-Jun-2012.
-# Version:      0.9.0
+# Last Change:  02-Sep-2012.
 
 if [[ "$CUTERHOME" == "" ]]; then
     echo "You must do a \"source .cuterrc\"."
