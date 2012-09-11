@@ -1,25 +1,11 @@
 #!/bin/bash
 
-# File:         install_CUTEr_SifDec.sh
+# File:         cuterbrew.sh
 # Version:      1.0.0
 # Maintainer:   Shintaro Kaneko <kaneshin0120@gmail.com>
-# Last Change:  03-Sep-2012.
+# Last Change:  12-Sep-2012.
 
-# Set the variables
-function set_environment_variable()
-{
-    CUTER=$1/cuter
-    MYCUTER=$CUTER/CUTEr.large.pc.lnx.gfo
-    SIFDEC=$1/sifdec
-    MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
-    MASTSIF=$1/mastsif
-}
-if [[ $CUTERHOME == "" ]]; then
-    CUTERHOME=~/CUTEr
-fi
-set_environment_variable $CUTERHOME
-
-function make_sure_command()
+function __make_sure_command()
 {
     cmd=`which $1 2>&1`
     if [[ $? != 0 ]]; then
@@ -29,7 +15,7 @@ function make_sure_command()
     fi
 }
 
-function make_directory()
+function __make_directory()
 {
     dir=`ls $1 2>&1`
     if [[ $? == 0 ]]; then
@@ -53,138 +39,162 @@ function make_directory()
     fi
 }
 
-case $1 in
-    install )
-        # Make sure that csh exists
-        make_sure_command csh
+function __get_mastsif()
+{
+    if [[ $1 == "large" ]]; then
+        size=$1
+    else
+        size='small'
+    fi
+    # get mastsif
+    cd $DEST/src
+    list=`ls "mastsif_$size.tar.gz" 2>&1`
+    if [[ $? != 0 ]]; then
+        wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_$size.tar.gz
+    fi
+    cd $DEST
+    tar zxvf src/mastsif_$size.tar.gz
+}
 
-        # Make sure that gcc exists
-        make_sure_command gcc
+function cuter_install()
+{
+    if [[ $1 == "" ]]; then
+        DEST=cuter
+    else
+        DEST=$1
+    fi
+    __set_environment_variable $DEST
 
-        # Make sure that gfortran exists
-        make_sure_command gfortran
+    # Make sure that commands exist
+    __make_sure_command csh
+    __make_sure_command gcc
+    __make_sure_command gfortran
 
-        # Make CUTEr directory
-        make_directory $CUTERHOME
+    # Make directories
+    __make_directory $DEST
+    __make_directory $CUTER
+    __make_directory $SIFDEC
+    __make_directory $DEST/src
 
-        # Make cuter directory
-        make_directory $CUTER
+    # Get CUTEr and SifDec archives
+    cd $DEST/src
+    # cuter.tar.gz
+    list=`ls cuter.tar.gz 2>&1`
+    if [[ $? != 0 ]]; then
+        wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
+    fi
+    # sifdec.tar.gz
+    list=`ls sifdec.tar.gz 2>&1`
+    if [[ $? != 0 ]]; then
+        wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
+    fi
 
-        # Make sifdec directory
-        make_directory $SIFDEC
+    # get mastsif
+    __get_mastsif small
 
-        # Make src directory
-        make_directory $CUTERHOME/src
+    # install cuter
+    cd $DEST
+    tar zxvf src/cuter.tar.gz
+    cd $CUTER
+    TEMP=$DEST/temp_$RANDOM
+    touch $TEMP
+    echo '5' >> $TEMP       # Select platform => (5) PC
+    echo '7' >> $TEMP       # Select Fortran compiler => [7 ] GNU gfortran
+    echo '2' >> $TEMP       # Select C compiler => [2 ] GNU gcc
+    echo 'D' >> $TEMP       # Set install precision => D=double
+    echo 'L' >> $TEMP       # Set install size => L=large
+    echo 'Y' >> $TEMP       # CUTEr will be installed in $CUTER => Y=Yes
+    echo 'Y' >> $TEMP       # install_mycuter will be run in $MYCUTER => Y=Yes
+    echo 'Y' >> $TEMP       # make all in $MYCUTER => Y=Yes
+    ./install_cuter < $TEMP
+    rm -f $TEMP
 
-        # Get CUTEr and SifDec archives
-        cd $CUTERHOME/src
-        # cuter.tar.gz
-        list=`ls | grep cuter.tar.gz 2>&1`
-        if [[ $? != 0 ]]; then
-            wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/cuter.tar.gz
-        fi
-        # sifdec.tar.gz
-        list=`ls | grep sifdec.tar.gz 2>&1`
-        if [[ $? != 0 ]]; then
-            wget ftp://ftp.numerical.rl.ac.uk/pub/sifdec/sifdec.tar.gz
-        fi
+    # install sifdec
+    cd $DEST
+    tar zxvf src/sifdec.tar.gz
+    cd $SIFDEC
+    TEMP=$DEST/temp_$RANDOM
+    touch $TEMP
+    echo '5' >> $TEMP       # Select platform => (5) PC
+    echo '11' >> $TEMP      # Select Fortran compiler => [11] GNU gfortran
+    echo 'D' >> $TEMP       # Set install precision => D=double
+    echo 'L' >> $TEMP       # Set install size => L=large
+    echo 'Y' >> $TEMP       # SifDec will be installed in $SIFDEC => Y=Yes
+    echo 'Y' >> $TEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
+    echo 'Y' >> $TEMP       # make all in $MYSIFDEC => Y=Yes
+    ./install_sifdec < $TEMP
+    rm -f $TEMP
 
-        # Get SIF small
-        yesno=""
-        while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
-            echo ""
-            echo " -------------------------------------------------------"
-            echo -n "Do you want to download a SIF(small) [Y/n]? "
-            read yesno
-            if [[ "$yesno" == "" ]]; then
-                yesno="Y"
-            fi
-            yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
-        done
-        if [[ "$yesno" == "Y" ]]; then
-            cd $CUTERHOME/src
-            wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
-            cd $CUTERHOME
-            tar zxvf src/mastsif_small.tar.gz
-        fi
-        # Get SIF large
-        yesno=""
-        while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
-            echo ""
-            echo " -------------------------------------------------------"
-            echo -n "Do you want to download a SIF(large) [Y/n]? "
-            read yesno
-            if [[ "$yesno" == "" ]]; then
-                yesno="Y"
-            fi
-            yesno=`echo $yesno | tr '[a-z]' '[A-Z]'`
-        done
-        if [[ "$yesno" == "Y" ]]; then
-            cd $CUTERHOME/src
-            wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
-            cd $CUTERHOME
-            tar zxvf src/mastsif_large.tar.gz
-        fi
-
-        # Install sifdec
-        cd $CUTERHOME
-        tar zxvf src/sifdec.tar.gz
-        cd $SIFDEC
-        CUTERTEMP=$CUTERHOME/temp_$RANDOM
-        touch $CUTERTEMP
-        echo '5' >> $CUTERTEMP       # Select platform => (5) PC
-        echo '11' >> $CUTERTEMP      # Select Fortran compiler => [11] GNU gfortran
-        echo 'D' >> $CUTERTEMP       # Set install precision => D=double
-        echo 'L' >> $CUTERTEMP       # Set install size => L=large
-        echo 'Y' >> $CUTERTEMP       # SifDec will be installed in $SIFDEC => Y=Yes
-        echo 'Y' >> $CUTERTEMP       # install_mysifdec will be run in $MYSIFDEC => Y=Yes
-        echo 'Y' >> $CUTERTEMP       # make all in $MYSIFDEC => Y=Yes
-        ./install_sifdec < $CUTERTEMP
-        rm -f $CUTERTEMP
-
-        # Install cuter
-        cd $CUTERHOME
-        tar zxvf src/cuter.tar.gz
-        cd $CUTER
-        CUTERTEMP=$CUTERHOME/temp_$RANDOM
-        touch $CUTERTEMP
-        echo '5' >> $CUTERTEMP       # Select platform => (5) PC
-        echo '7' >> $CUTERTEMP       # Select Fortran compiler => [7 ] GNU gfortran
-        echo '2' >> $CUTERTEMP       # Select C compiler => [2 ] GNU gcc
-        echo 'D' >> $CUTERTEMP       # Set install precision => D=double
-        echo 'L' >> $CUTERTEMP       # Set install size => L=large
-        echo 'Y' >> $CUTERTEMP       # CUTEr will be installed in $CUTER => Y=Yes
-        echo 'Y' >> $CUTERTEMP       # install_mycuter will be run in $MYCUTER => Y=Yes
-        echo 'Y' >> $CUTERTEMP       # make all in $MYCUTER => Y=Yes
-        ./install_cuter < $CUTERTEMP
-        rm -f $CUTERTEMP
-
-        # Make .cuterrc
-        CUTERRC=$CUTERHOME/.cuterrc
-        rm -f $CUTERRC
-        touch $CUTERRC
-        cat > $CUTERRC << _EOF_
-export CUTERHOME=$CUTERHOME
-export CUTER=\$CUTERHOME/cuter
+    # make .cuterrc
+    CUTERRC=$DEST/.cuterrc
+    rm -f $CUTERRC
+    touch $CUTERRC
+    cat > $CUTERRC << _EOF_
+export DEST=$DEST
+export CUTER=\$DEST/cuter
 export MYCUTER=\$CUTER/CUTEr.large.pc.lnx.gfo
-export SIFDEC=\$CUTERHOME/sifdec
+export SIFDEC=\$DEST/sifdec
 export MYSIFDEC=\$SIFDEC/SifDec.large.pc.lnx.gfo
-export MASTSIF=\$CUTERHOME/mastsif
+export MASTSIF=\$DEST/mastsif
 export PATH=\$PATH:\$MYCUTER/bin:\$MYCUTER/double/bin
 export PATH=\$PATH:\$MYSIFDEC/bin:\$MYSIFDEC/double/bin
 export MANPATH=\$MANPATH:\$CUTER/common/man:\$SIFDEC/common/man
 export LIBPATH=\$LIBPATH:\$MYCUTER/double/lib
 _EOF_
 
-        # Using .cuterrc
-        echo "Create \"$CUTERRC\" which must run CUTEr and SidDec."
-        echo "You write down \"source $CUTERRC\" on your .zshrc or .bashrc."
-        echo " -------------------------------------------------------"
-        echo " --- @INC $CUTERRC ---"
-        cat $CUTERRC
+    # Using .cuterrc
+    echo "Create \"$CUTERRC\" which must run CUTEr and SidDec."
+    echo "You write down \"source $CUTERRC\" on your .zshrc or .bashrc."
+    echo " -------------------------------------------------------"
+    echo " --- @INC $CUTERRC ---"
+    cat $CUTERRC
+}
+
+function cuter_uninstall()
+{
+    rm -rvf $CUTERHOME/$2
+}
+
+function cuter_list()
+{
+    ls -l1 $CUTERHOME
+}
+
+function cuter_mastsif()
+{
+    __get_mastsif $1
+}
+
+function __set_environment_variable()
+{
+    CUTER=$1/cuter
+    MYCUTER=$CUTER/CUTEr.large.pc.lnx.gfo
+    SIFDEC=$1/sifdec
+    MYSIFDEC=$SIFDEC/SifDec.large.pc.lnx.gfo
+    MASTSIF=$1/mastsif
+}
+
+# main
+if [[ $CUTERHOME == "" ]]; then
+    CUTERHOME=~/CUTEr
+fi
+dir=`ls $CUTERHOME 2>&1`
+if [[ $? != 0 ]]; then
+    mkdir $1
+fi
+
+case $1 in
+    install )
+        cuter_install $2
     ;;
     uninstall )
-        rm -rvf $CUTERHOME
+        cuter_uninstall $2
+    ;;
+    ls | list )
+        cuter_list
+    ;;
+    mastsif )
+        # cuter_mastsif $2
     ;;
     * )
         echo "Require argument"
@@ -194,4 +204,3 @@ _EOF_
         echo "      remove $CUTERHOME."
     ;;
 esac
-
