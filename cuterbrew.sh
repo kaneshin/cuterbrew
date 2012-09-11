@@ -180,7 +180,7 @@ if [[ $CUTERHOME == "" ]]; then
 fi
 dir=`dir $CUTERHOME 2>&1`
 if [[ $? != 0 ]]; then
-    mkdir $1
+    mkdir $CUTERHOME
 fi
 
 case $1 in
