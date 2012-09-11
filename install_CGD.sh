@@ -3,15 +3,17 @@
 # File:         install_CGD.sh
 # Version:      1.0.0
 # Maintainer:   Shintaro Kaneko <kaneshin0120@gmail.com>
-# Last Change:  02-Sep-2012.
+# Last Change:  03-Sep-2012.
 
-if [[ "$CUTERHOME" == "" ]]; then
+if [[ $CUTERHOME == "" ]]; then
+    echo "There is no \$CUTERHOME which is an environmental variable."
     echo "You must do a \"source .cuterrc\"."
     exit 1
 fi
 
 # Set the variables
 CGDDIR=CG_DESCENT
+CGDVER=5.3
 CGDHOME=$CUTERHOME/$CGDDIR
 CUTEINTF=$CGDHOME/CUTEr_interface
 
@@ -28,17 +30,17 @@ fi
 cd $CUTERHOME/src
 list=`ls | grep CG_DESCENT-C-5.0.tar.gz 2>&1`
 if [[ $? != 0 ]]; then
-    wget http://www.math.ufl.edu/~hager/papers/CG/Archive/CG_DESCENT-C-5.0.tar.gz
+    wget http://www.math.ufl.edu/~hager/papers/CG/Archive/CG_DESCENT-C-$CGDVER.tar.gz
 fi
 
 # Install CG_DESCENT
 cd $CUTERHOME
-tar zxvf src/CG_DESCENT-C-5.0.tar.gz > $CGDDIR.log
+tar zxvf src/CG_DESCENT-C-$CGDVER.tar.gz > $CGDDIR.log
 c=`dir $CGDDIR 2>&1`
 if [[ $? == 0 ]]; then
     rm -rf $CGDDIR
 fi
-mv CG_DESCENT-C-5.0/ $CGDDIR/
+mv CG_DESCENT-C-$CGDVER/ $CGDDIR/
 mv CG_DESCENT.log $CGDDIR/
 
 cd $CUTEINTF
