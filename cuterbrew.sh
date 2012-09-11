@@ -17,7 +17,7 @@ function __make_sure_command()
 
 function __make_directory()
 {
-    dir=`ls $1 2>&1`
+    dir=`dir $1 2>&1`
     if [[ $? == 0 ]]; then
         yesno=""
         while [[ $yesno != "Y" ]] && [[ $yesno != "N" ]]; do
@@ -178,7 +178,7 @@ function __set_environment_variable()
 if [[ $CUTERHOME == "" ]]; then
     CUTERHOME=~/CUTEr
 fi
-dir=`ls $CUTERHOME 2>&1`
+dir=`dir $CUTERHOME 2>&1`
 if [[ $? != 0 ]]; then
     mkdir $1
 fi
