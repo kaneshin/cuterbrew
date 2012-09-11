@@ -59,9 +59,9 @@ function __get_mastsif()
 function cuter_install()
 {
     if [[ $1 == "" ]]; then
-        DEST=cuter
+        DEST=$CUTERHOME/cuter
     else
-        DEST=$1
+        DEST=$CUTERHOME/$1
     fi
     __set_environment_variable $DEST
 
